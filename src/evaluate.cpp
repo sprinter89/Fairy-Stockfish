@@ -134,9 +134,6 @@ namespace {
     S(0, 0), S(10, 28), S(17, 33), S(15, 41), S(62, 72), S(168, 177), S(276, 260)
   };
 
-  // KingProximity contains a penalty according to distance from king
-  constexpr Score KingProximity = S(1, 3);
-
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CorneredBishop     = S( 50, 50);
@@ -343,7 +340,17 @@ namespace {
 
         // Penalty if the piece is far from the kings in drop variants
         if ((pos.captures_to_hand() || pos.two_boards()) && pos.count<KING>(Them) && pos.count<KING>(Us))
-            score -= KingProximity * distance(s, pos.square<KING>(Us)) * distance(s, pos.square<KING>(Them));
+        {
+            Bitboard b2 = b | s;
+            int dist1 = FILE_MAX, dist2 = FILE_MAX;
+            while (b2)
+            {
+                Square s2 = pop_lsb(&b2);
+                dist1 = std::min(dist1, distance(pos.square<KING>(Us), s2));
+                dist2 = std::min(dist2, distance(pos.square<KING>(Them), s2));
+            }
+            score -= make_score(PieceValue[MG][Pt] / 12, std::min(PieceValue[EG][Pt] / 4, PawnValueEg)) * (dist1 * dist2 - 4) / (pos.max_file() * pos.max_file());
+        }
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
