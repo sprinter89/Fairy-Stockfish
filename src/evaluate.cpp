@@ -908,6 +908,9 @@ namespace {
 
     Score score = SCORE_ZERO;
 
+    if (pos.captures_to_hand())
+        score += make_score(3, 10) * popcount(attackedBy[Us][ALL_PIECES]);
+
     // Capture the flag
     if (pos.capture_the_flag(Us))
     {
