@@ -1122,7 +1122,7 @@ namespace {
         for (PieceType pt = PAWN; pt < KING; ++pt)
             score += hand<WHITE>(pt) - hand<BLACK>(pt);
 
-    score += (mobility[WHITE] - mobility[BLACK]) * (1 + pos.captures_to_hand() + pos.must_capture());
+    score += (mobility[WHITE] - mobility[BLACK]) * (1 + pos.captures_to_hand() + pos.must_capture() + !pos.checking_permitted());
 
     score +=  king<   WHITE>() - king<   BLACK>()
             + threats<WHITE>() - threats<BLACK>()
