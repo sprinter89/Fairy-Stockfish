@@ -898,7 +898,7 @@ namespace {
         &&  depth < 6
         && !(   pos.extinction_value() == -VALUE_MATE
              && pos.extinction_piece_types().find(ALL_PIECES) == pos.extinction_piece_types().end())
-        && (pos.checking_permitted() || !pos.capture_the_flag_piece())
+        &&  pos.checking_permitted()
         &&  eval - futility_margin(depth, improving) * (1 + pos.check_counting()) >= beta
         &&  eval < VALUE_KNOWN_WIN) // Do not return unproven wins
         return eval;
@@ -1089,6 +1089,7 @@ moves_loop: // When in check, search starts from here
               // Futility pruning: parent node (~5 Elo)
               if (   lmrDepth < 6
                   && !inCheck
+                  && pos.checking_permitted()
                   && !(   pos.extinction_value() == -VALUE_MATE
                        && pos.extinction_piece_types().find(ALL_PIECES) == pos.extinction_piece_types().end())
                   && ss->staticEval + 235 + 172 * lmrDepth <= alpha
